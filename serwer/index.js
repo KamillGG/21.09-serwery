@@ -11,9 +11,7 @@ var con = mysql.createConnection({
 })
 con.connect((err)=>{
     if(err) console.log(err)
-    else{
-        console.log('polaczono')
-    }
+    else console.log('polaczono')
 })
 app.use(cors())
 axios.get('https://restcountries.com/v3.1/all').then((response)=>{
@@ -22,15 +20,12 @@ axios.get('https://restcountries.com/v3.1/all').then((response)=>{
     con.query(`SELECT * FROM kraje`,(err,result,fields)=>{
         if(err) console.log(err)
         else currentTable = result
-        console.log(currentTable)
     })
     for(var i=0;i<=resp.length-1;i++){
-        console.log(resp[i].name.common)
-        console.log(currentTable[i])
             const sql = `INSERT INTO kraje(name, capital, population) VALUES ("${resp[i].name.common}","${resp[i].capital}",${resp[i].population})`
             con.query(sql, (err,result,fields)=>{
             })
-            const sql2 = `UPDATE kraje SET area='${resp[i].area}' WHERE name = "${resp[i].name.common}"`
+            const sql2 = `UPDATE kraje SET area='${resp[i].area}', continent='${resp[i].region}' WHERE name = "${resp[i].name.common}"`
             con.query(sql2,(err,result,fields)=>{
                 if(err) console.log(err)
             })
@@ -41,5 +36,33 @@ axios.get('https://restcountries.com/v3.1/all').then((response)=>{
         
     }
     
+})
+
+
+app.get('/add/:kontynent',(req,res)=>{
+    const kontynent = req.params.kontynent
+    const sql = `SELECT * FROM kraje WHERE continent='${kontynent}'`
+    con.query(sql,(err,result,fields)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+app.get('/populacja/:pop',(req,res)=>{
+    const pop = parseInt(req.params.pop)
+    console.log(pop)
+    const sql = `SELECT * FROM kraje WHERE population>${pop}`
+    con.query(sql,(err,result,fields)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+app.get('/kontynenty',(req,res)=>{
+    console.log('wykonano')
+    const sql = `SELECT DISTINCT continent FROM kraje`
+    con.query(sql,(err,result,fields)=>{
+        console.log('response')
+        if(err) console.log(err)
+        res.send(result)
+    })
 })
 app.listen(3000)

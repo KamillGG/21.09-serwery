@@ -21,7 +21,7 @@ axios.get('https://restcountries.com/v3.1/all').then((response)=>{
         else currentTable = result
     })
     for(var i=0;i<=resp.length-1;i++){
-            const sql = `INSERT INTO kraje(name, capital, population) VALUES ("${resp[i].name.common}","${resp[i].capital}",${resp[i].population})`
+            const sql = `INSERT INTO kraje(id,name, capital, population) VALUES ("${i}","${resp[i].name.common}","${resp[i].capital}",${resp[i].population})`
             con.query(sql, (err,result,fields)=>{
             })
             const sql2 = `UPDATE kraje SET area='${resp[i].area}', continent='${resp[i].region}' WHERE name = "${resp[i].name.common}"`
@@ -65,11 +65,28 @@ app.get('/kontynenty',(req,res)=>{
     })
 })
 app.get('/panstwa/:continent',(req,res)=>{
-    const continent =req.params.continent
-    const sql = `SELECT * FROM kraje WHERE continent='${continent}'`
+    var counter = 0
+    var continent =req.params.continent
+    var newString = "continent="
+    for(var i=0;i<=continent.length;i++){
+        if(i==continent.length){
+            newString += '--'
+        }
+        else if(continent[i]=='.'){
+            if(continent[i+1]!=undefined){
+                newString+="|| continent="
+            }
+            
+            
+        }
+        else{
+            newString += continent[i]
+        }
+    }
+    const sql = `SELECT * FROM kraje WHERE ${newString}`
     con.query(sql,(err,result,fields)=>{
         if(err) console.log(err)
-        else res.send(result)
+        else console.log(result)
     })
 })
 app.get('/getPop',(req,res)=>{
@@ -77,6 +94,17 @@ app.get('/getPop',(req,res)=>{
     con.query(sql,(err,result,fields)=>{
         if(err) console.log(err)
         else res.send(result)
+    })
+})
+app.get('/addRecord/:name/:capital/:continent/:population/:area',(req,res)=>{
+    const name = req.params.name
+    const capital = req.params.capital
+    const continent = req.params.continent
+    const population = req.params.population
+    const area = req.params.area
+    const sql = `INSERT INTO kraje(name, population, capital, continent, area) VALUES ('${name}','${population}','${capital}','${continent}','${area}')`
+    con.query(sql,(err,result,fields)=>{
+        if(err) console.log('err')
     })
 })
 app.listen(3000)

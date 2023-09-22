@@ -15,6 +15,7 @@ async function getData(){
         if(radio.id!="WhatIsLove"){
             radio.addEventListener('click',()=>{
                 console.log(radio.id)
+                sorting()
             })
         }
         else{
@@ -28,6 +29,16 @@ async function getData(){
     }
 }
 getData()
+async function sorting(){
+    var strings = ''
+    for(var i=0;i<=document.getElementsByClassName('something').length-1;i++){
+        if(document.getElementsByClassName('something')[i].checked==true){
+            strings += `'${document.getElementsByClassName('something')[i].id}'.`
+        }
+    }
+    const data = await fetch(`http://localhost:3000/panstwa/${strings}`)
+    console.log(strings)
+}
 async function rangeInp(){
     const data = await fetch(`http://localhost:3000/getPop`)
     const json = await data.json()
@@ -48,5 +59,24 @@ async function rangeInp(){
         console.log(parseInt(oldString).toLocaleString())
          document.getElementById('value').innerHTML = parseInt(oldString).toLocaleString('en-US');
     });
+}
+async function sendForm(){
+    
+    var name = document.getElementById('name').value
+    var capital = document.getElementById('capital').value
+    var continent = document.getElementById('continent').value
+    var population = document.getElementById('population').value
+    var area = document.getElementById('area').value
+    if(name=='' || capital=="" || continent=="" || population=='' || area==''){
+        window.alert('Wypelnij wszystkie pola!')
+    }
+    else{
+        const data = await fetch(`http://localhost:3000/addRecord/${name}/${capital}/${continent}/${population}/${area}`)
+        name=''
+        capital=''
+        continent=''
+        population=''
+        area=''
+    }
 }
 rangeInp()

@@ -16,7 +16,6 @@ con.connect((err)=>{
 app.use(cors())
 axios.get('https://restcountries.com/v3.1/all').then((response)=>{
     const resp = response.data
-    var currentTable =[]
     con.query(`SELECT * FROM kraje`,(err,result,fields)=>{
         if(err) console.log(err)
         else currentTable = result
@@ -63,6 +62,21 @@ app.get('/kontynenty',(req,res)=>{
         console.log('response')
         if(err) console.log(err)
         res.send(result)
+    })
+})
+app.get('/panstwa/:continent',(req,res)=>{
+    const continent =req.params.continent
+    const sql = `SELECT * FROM kraje WHERE continent='${continent}'`
+    con.query(sql,(err,result,fields)=>{
+        if(err) console.log(err)
+        else res.send(result)
+    })
+})
+app.get('/getPop',(req,res)=>{
+    const sql = `SELECT MAX(population) AS population FROM kraje;`
+    con.query(sql,(err,result,fields)=>{
+        if(err) console.log(err)
+        else res.send(result)
     })
 })
 app.listen(3000)

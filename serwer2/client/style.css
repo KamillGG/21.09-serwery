@@ -1,0 +1,28 @@
+body{
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 20vh 80vh;
+    grid-template-areas: "a1""a2";
+}
+#radioCont{
+    grid-area: a1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+#countries{
+    grid-area: a2;
+}
+input[type="range"] {
+    width: 500px;
+    height: 50px;
+    margin: 0;
+  }
+  datalist {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    writing-mode: vertical-lr;
+    width: 500px;
+  }
